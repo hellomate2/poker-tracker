@@ -34,5 +34,14 @@ window.SESSIONS = [
   "cashout": 60,
   "hours": 1,
   "notes": "vs Billy Le Blanc, 75 hands. Buy-in assumed $20 (table stack in the hand history); profit $40 as reported."
+ },
+ {
+  "date": "2026-09-17",
+  "stakes": "",
+  "game": "PokerNow, 3-handed (online)",
+  "buyin": 100,
+  "cashout": 112.88,
+  "hours": null,
+  "notes": "vs tawer12 (+37.12) and vchen (-50.00). Stakes and hours not recorded."
  }
 ];
