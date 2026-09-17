@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poker Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F2EE;--card:#FFFFFF;--ink:#171A1F;--ink2:#555B66;--ink3:#8A909B;--line:#DCDAD3;--accent:#1F5F3F;--pos:#1F7A4D;--neg:#A8382A;--pos-soft:#E1F3E8;--neg-soft:#F8E4E0;--shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.06)}
+@media(prefers-color-scheme:dark){:root{--bg:#121418;--card:#1B1E24;--ink:#EDEEF0;--ink2:#B4B9C2;--ink3:#7C838E;--line:#2C313A;--accent:#7CCBA0;--pos:#5FCB8E;--neg:#F08B7C;--pos-soft:#14301F;--neg-soft:#3A1914;--shadow:0 1px 2px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4)}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:900px;margin:0 auto;padding:28px 18px 70px}
+header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.02em}.sub{color:var(--ink3);font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
+.tile .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.tile .v{font-size:26px;font-weight:600;margin-top:4px;letter-spacing:-.02em}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px 18px;margin-bottom:16px}
+.card h2{margin:0 0 10px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+canvas{width:100%;height:220px;display:block}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+td.num,th.num{text-align:right}tr:last-child td{border-bottom:none}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font-weight:600;font-size:13px}
+.pill.pos{background:var(--pos-soft)}.pill.neg{background:var(--neg-soft)}
+.note{color:var(--ink3);font-size:12.5px;display:block;margin-top:2px;max-width:42ch}
+footer{color:var(--ink3);font-size:12.5px;margin-top:20px}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Poker Tracker</h1><div class="sub" id="sub"></div></header>
+<div class="tiles" id="tiles"></div>
+<div class="card"><h2>Running total</h2><canvas id="chart" width="1600" height="440"></canvas></div>
+<div class="card"><h2>Sessions</h2><div class="tw"><table id="tbl"><thead><tr>
+<th>Date</th><th>Stakes</th><th>Game</th><th class="num">Buy-in</th><th class="num">Cash-out</th><th class="num">Profit</th><th class="num">Hours</th><th class="num">$/hr</th><th class="num">Total</th></tr></thead><tbody></tbody></table></div></div>
+<footer>Source of truth is <a href="Poker%20Tracker.xlsx">Poker Tracker.xlsx</a> in this repo. Edit it, run <span class="mono">sync.py</span>, commit.</footer>
+</div>
+<script src="data/sessions.js"></script>
+<script>
+const S=(window.SESSIONS||[]).map(s=>({...s,profit:+(s.cashout-s.buyin).toFixed(2)}));
+S.sort((a,b)=>a.date.localeCompare(b.date));
+let run=0;S.forEach(s=>{run=+(run+s.profit).toFixed(2);s.total=run});
+const usd=n=>(n<0?'-':'')+'$'+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const net=S.reduce((a,s)=>a+s.profit,0), bought=S.reduce((a,s)=>a+s.buyin,0);
+const hrsS=S.filter(s=>s.hours), hrs=hrsS.reduce((a,s)=>a+s.hours,0), hrProfit=hrsS.reduce((a,s)=>a+s.profit,0);
+const wins=S.filter(s=>s.profit>0).length;
+const tiles=[["Net",usd(net),net>=0?'pos':'neg'],["Sessions",S.length,''],["Win rate",S.length?Math.round(100*wins/S.length)+'%':'–',''],["ROI",bought?Math.round(100*net/bought)+'%':'–',net>=0?'pos':'neg'],["$ / hour",hrs?usd(hrProfit/hrs):'–',hrProfit>=0?'pos':'neg'],["Hours logged",hrs||'–','']];
+document.getElementById('tiles').innerHTML=tiles.map(([k,v,c])=>`<div class="tile"><div class="k">${k}</div><div class="v mono ${c}">${v}</div></div>`).join('');
+document.getElementById('sub').textContent=S.length?`${S[0].date} to ${S[S.length-1].date}`:'no sessions yet';
+const tb=document.querySelector('#tbl tbody');
+[...S].reverse().forEach(s=>{const c=s.profit>=0?'pos':'neg';tb.insertAdjacentHTML('beforeend',`<tr><td class="mono">${s.date}</td><td>${s.stakes||'<span class="note">–</span>'}</td><td>${s.game}${s.notes?`<span class="note">${s.notes}</span>`:''}</td><td class="num mono">${usd(s.buyin)}</td><td class="num mono">${usd(s.cashout)}</td><td class="num"><span class="pill mono ${c}">${usd(s.profit)}</span></td><td class="num mono">${s.hours??'–'}</td><td class="num mono">${s.hours?usd(s.profit/s.hours):'–'}</td><td class="num mono ${s.total>=0?'pos':'neg'}">${usd(s.total)}</td></tr>`)});
+// chart
+const cv=document.getElementById('chart'),ctx=cv.getContext('2d'),W=cv.width,H=cv.height,P={l:90,r:30,t:24,b:44};
+const cs=getComputedStyle(document.documentElement),col=n=>cs.getPropertyValue(n).trim();
+const pts=[0,...S.map(s=>s.total)],mn=Math.min(0,...pts),mx=Math.max(0,...pts),span=(mx-mn)||1;
+const x=i=>P.l+(W-P.l-P.r)*(pts.length>1?i/(pts.length-1):0),y=v=>P.t+(H-P.t-P.b)*(1-(v-mn)/span);
+ctx.font='22px JetBrains Mono, monospace';ctx.fillStyle=col('--ink3');ctx.strokeStyle=col('--line');ctx.lineWidth=2;
+for(let k=0;k<=4;k++){const v=mn+span*k/4,yy=y(v);ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(W-P.r,yy);ctx.stroke();ctx.textAlign='right';ctx.fillText(usd(v).replace('.00',''),P.l-12,yy+7)}
+ctx.strokeStyle=col('--ink3');ctx.setLineDash([6,8]);ctx.beginPath();ctx.moveTo(P.l,y(0));ctx.lineTo(W-P.r,y(0));ctx.stroke();ctx.setLineDash([]);
+const g=ctx.createLinearGradient(0,P.t,0,H-P.b);g.addColorStop(0,col('--accent')+'55');g.addColorStop(1,col('--accent')+'00');
+ctx.beginPath();ctx.moveTo(x(0),y(0));pts.forEach((v,i)=>ctx.lineTo(x(i),y(v)));ctx.lineTo(x(pts.length-1),y(0));ctx.closePath();ctx.fillStyle=g;ctx.fill();
+ctx.beginPath();pts.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.strokeStyle=col('--accent');ctx.lineWidth=5;ctx.lineJoin='round';ctx.stroke();
+pts.forEach((v,i)=>{if(!i)return;ctx.beginPath();ctx.arc(x(i),y(v),8,0,7);ctx.fillStyle=col('--card');ctx.fill();ctx.lineWidth=4;ctx.strokeStyle=col('--accent');ctx.stroke()});
+ctx.fillStyle=col('--ink3');ctx.textAlign='center';S.forEach((s,i)=>{if(S.length<=8||i%Math.ceil(S.length/8)==0||i==S.length-1)ctx.fillText(s.date.slice(5),x(i+1),H-14)});
+</script>
+</body></html>
