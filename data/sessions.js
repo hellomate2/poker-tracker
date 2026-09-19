@@ -70,5 +70,14 @@ window.SESSIONS = [
   "cashout": 1.3,
   "hours": null,
   "notes": "vs Aaron. Bought in $10, cashed out $1.30. Hours not recorded."
+ },
+ {
+  "date": "2026-09-19",
+  "stakes": "",
+  "game": "Online (site not recorded)",
+  "buyin": 20,
+  "cashout": 20.1,
+  "hours": 1,
+  "notes": "Bought in $20, cashed out $20.10. Stakes and site not recorded."
  }
 ];
