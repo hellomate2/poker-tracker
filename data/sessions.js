@@ -43,5 +43,32 @@ window.SESSIONS = [
   "cashout": 112.88,
   "hours": null,
   "notes": "vs tawer12 (+37.12) and vchen (-50.00). Stakes and hours not recorded."
+ },
+ {
+  "date": "2026-09-18",
+  "stakes": "$0.25 / $0.50",
+  "game": "Poker at Berkeley (online)",
+  "buyin": 100,
+  "cashout": 77.36,
+  "hours": 2,
+  "notes": "Multiway. $100 total buy-in incl. 1 rebuy; cashed out $77.36."
+ },
+ {
+  "date": "2026-09-18",
+  "stakes": "$0.25 / $0.50",
+  "game": "Heads-up, PokerNow (online)",
+  "buyin": 20,
+  "cashout": 59,
+  "hours": 1,
+  "notes": "vs Casey. Won $39 as reported; buy-in not given, assumed $20 (same as the Sep 17 heads-up)."
+ },
+ {
+  "date": "2026-09-18",
+  "stakes": "$0.10 / $0.20",
+  "game": "Heads-up, PokerNow (online)",
+  "buyin": 10,
+  "cashout": 1.3,
+  "hours": null,
+  "notes": "vs Aaron. Bought in $10, cashed out $1.30. Hours not recorded."
  }
 ];
