@@ -79,5 +79,14 @@ window.SESSIONS = [
   "cashout": 20.1,
   "hours": 1,
   "notes": "Bought in $20, cashed out $20.10. Stakes and site not recorded."
+ },
+ {
+  "date": "2026-09-19",
+  "stakes": "",
+  "game": "Poker at Berkeley (Discord, online)",
+  "buyin": 20,
+  "cashout": 0,
+  "hours": 1,
+  "notes": "Lost the full $20 buy-in. Stakes not recorded."
  }
 ];
