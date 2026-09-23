@@ -88,5 +88,14 @@ window.SESSIONS = [
   "cashout": 0,
   "hours": 1,
   "notes": "Lost the full $20 buy-in. Stakes not recorded."
+ },
+ {
+  "date": "2026-09-22",
+  "stakes": "$0.25 / $0.50",
+  "game": "Poker at Berkeley (online)",
+  "buyin": 150,
+  "cashout": 0,
+  "hours": null,
+  "notes": "Lost the full $150 buy-in. Hours not recorded."
  }
 ];
